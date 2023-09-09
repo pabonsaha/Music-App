@@ -27,11 +27,16 @@
 import axios from 'axios';
 import TextInput from '../components/global/TextInput.vue';
 import {ref} from 'vue';
+import { useUserStore } from '../stores/user-store.js';
 
 let email = ref(null);
 let password = ref(null);
 let errors = ref([]);
 let credentialNotMathced = ref(null);
+
+const userStore = useUserStore();
+
+
 const login = async function(){
 
     errors.value = [];
@@ -39,10 +44,12 @@ const login = async function(){
     try{
         
         let res = await axios.post('http://music-laravel.test/api/login',{email:email.value,password: password.value});
-        console.log('form try');
+
+        userStore.setUser(res);
+        
 
     }catch(err){
-        console.log('from catch');
+        console.log(err);
         errors.value = err.response.data?.errors??null;
 
         credentialNotMathced.value = err.response?.data?.error??null;
